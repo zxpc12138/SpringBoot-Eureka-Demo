@@ -1,0 +1,67 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: Zuul-Server
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          # 开启从eureka 拉取服务列表  并自动映射
+          enabled: true
+          # true 只能识别小写,false 只能识别大写(eureka服务)
+          lower-case-service-id: true
+      routes:
+       # 路由定义的命名，唯一即可。命名规则符合java中的变量命名规则
+       - id: gate_route
+#         uri: http://localhost:8081/,http://localhost:8082/
+         # 请求转发到uri定义的地址，当前路由定义对应的微服务转发地址，lb 代表loadbalance负载均衡
+         uri: lb://eureka-provider-service
+         predicates:
+            #所有路由中有query的都会转发到 https://localhost:8081
+            # 定义一个谓词，格式：谓词名称=参数 或者 name:谓词名称 args:参数
+#           - Path=/query/**
+           - Path=/query/**
+         filters:
+#           - PrefixPath=/query
+#           - RewritePath=/query/(?<segment>.*), /$\{segment}
+
+#zuul:
+#  routes:
+#    eureka-provider-service: /query/**
+
+#这是服务网关路由：外部只用访问localhost:8300，再由8300的zuul配置来决定你所需要调用的服务
+#zuul:
+#  routes:
+    #服务提供者路由信息（名字是可以自定义的，没有什么特定规则，你能区分就好）
+#    abc:
+      #配置对外的路径匹配
+#      path: /query/**
+      #配置调用的服务名（官方推荐使用）
+#      serviceId: eureka-provider-service
+      #当zuul不往eureka中注册，就无法映射eureka中的服务，此时会会寻找自己配置的服务
+#      serviceId: eureka-provider-service
+#       只能配置一个端口,配置多个端口访问404
+#      url: http://localhost:8081/
+
+
+#eureka-provider-service:
+#  ribbon:
+#    listOfServers: http://localhost:8081/,http://localhost:8082/
+
+#    #不推荐使用URL这种方式，看这样直接指定就无法使用负载均衡
+#    use-server-client-temp:
+#      path: /clientTemp/**
+#      #配置调用的服务地址（不推荐使用）
+
+eureka:
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${spring.cloud.client.ip-address}
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@localhost:8080/eureka/
+      #false代表不往eureka注册
+#    enabled: false
+#       defaultZone: http://localhost:8080/eureka/

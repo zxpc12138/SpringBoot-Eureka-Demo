@@ -1,0 +1,21 @@
+eureka:
+  instance:
+    #使用IP地址注册
+    preferIpAddress: true
+    #向注册中心注册服务ID
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${spring.cloud.client.ip-address}
+  client:
+    serviceUrl:
+      #如需配置多个eurekaserver之间用,隔开
+      defaultZone: http://root:root@localhost:8080/eureka/
+#      defaultZone: http://localhost:8060/eureka/,http://localhost:8070/eureka/,http://localhost:8080/eureka/
+server:
+  port: 8082
+spring:
+  application:
+    #???????
+    name:  eureka-provider-service
+  datasource:
+    url: jdbc:sqlite:C:\Users\Administrator\Desktop\first.db
+    driver-class-name: org.sqlite.JDBC

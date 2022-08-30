@@ -1,0 +1,37 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: turbine
+
+eureka:
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${spring.cloud.client.ip-address}
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@localhost:8080/eureka/
+
+turbine:
+  # 监控的应用名称，多个以逗号隔开
+  app-config: eureka-consumer-service,eureka-consumer-service2
+  # 指定集群名称为 default
+  cluster-name-expression: new String("default")
+  aggregator:
+    # 指定聚合哪些集群，默认为 default
+    cluster-config: default
+
+hystrix:
+  dashboard:
+    #允许抓取日志的服务列表
+    proxy-stream-allow-list: localhost
+
+#management:
+#  endpoints:
+#    web:
+#      base-path: /
+#management:
+#  server:
+#    port: 8888

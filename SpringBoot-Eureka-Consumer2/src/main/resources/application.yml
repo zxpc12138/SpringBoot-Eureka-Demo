@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:C:\Users\Administrator\Desktop\first.db
+    driver-class-name: org.sqlite.JDBC
+  application:
+    #???????
+    name: eureka-consumer-service2
+  cloud:
+    circuitbreaker:
+      hystrix:
+        enabled: true
+
+server:
+  port: 8090
+
+eureka:
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${spring.cloud.client.ip-address}
+
+  client:
+    serviceUrl:
+      defaultZone: http://root:root@localhost:8080/eureka/
+#       defaultZone: http://localhost:8080/eureka/
+
+logging:
+  level:
+    com:
+      example:
+        springbooteurekaconsumer2:
+          service:
+            UserService: DEBUG
+#开启断路器
+feign:
+  circuitbreaker:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      #去掉/actuator,（如果与Turbine结合需要注释掉）
+#      base-path: /
+      exposure:
+        #熔断监控暴露的接口，或者使用*暴露全部被actuator监控的端点
+        #默认访问路径为/actuator/hystrix.stream
+        include: hystrix.stream
+
+#配置的访问列表的地址，必须一一对应：
+#如使用：http://127.0.0.1:8089/hystrix.stream访问，就配置hystrix.dashboard.proxy-stream-allow-list=127.0.0.1
+#如使用：http://localhost:8089/hystrix.stream访问，就配置hystrix.dashboard.proxy-stream-allow-list=localhost
+#不然会出现：Unable to connect to Command Metric Stream.
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: localhost
